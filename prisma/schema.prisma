@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String?  @unique
+  hashedPassword String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  institute      String
+}
+
+model Learner {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  majors    Major[]  @relation("MajorToLearner")
+}
+
+model Major {
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  learnerId       String           @db.ObjectId
+  learner         Learner          @relation("MajorToLearner", fields: [learnerId], references: [id])
+  specializations Specialization[] @relation("SpecializationToMajor")
+  src             String
+
+  @@index([learnerId])
+}
+
+model Specialization {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  majorId    String     @db.ObjectId
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  major      Major      @relation("SpecializationToMajor", fields: [majorId], references: [id])
+  categories Category[] @relation("SpecializationToCategory")
+
+  @@index([majorId])
+}
+
+model Category {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  specializationId String         @db.ObjectId
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  specialization   Specialization @relation("SpecializationToCategory", fields: [specializationId], references: [id])
+  topics           Topic[]        @relation("CategoryToTopic")
+  src              String
+
+  @@index([specializationId])
+}
+
+model Topic {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  categoryId String     @db.ObjectId
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  category   Category   @relation("CategoryToTopic", fields: [categoryId], references: [id])
+  subTopics  SubTopic[] @relation("TopicToSubTopic")
+
+  @@index([categoryId])
+}
+
+model SubTopic {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  testStartTime DateTime?
+  testEndTime   DateTime?
+  topicId       String    @db.ObjectId
+  topic         Topic     @relation("TopicToSubTopic", fields: [topicId], references: [id])
+
+  questions Question[] @relation("SubTopicToQuestion")
+}
+
+model Question {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  question   String
+  options    String[]
+  ansIndex   String
+  code       Boolean
+  answer     String
+  subTopicId String   @db.ObjectId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  subTopic   SubTopic @relation("SubTopicToQuestion", fields: [subTopicId], references: [id])
+
+  @@index([subTopicId])
+}
