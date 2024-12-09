@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from 'express';
+import http from 'http'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import authRouter from './routes/auth-route'
@@ -11,11 +12,21 @@ import subTopicRouter from './routes/sub-topic-route'
 import questionRouter from './routes/question-route'
 import allotTest from './routes/allot-test-route'
 import adminAuthRouter from './routes/admin-auth-route'
+import testProgressRoute from './routes/test-progress-route'
+import testDatarouter from './routes/test-data-route'
+import { Server } from 'socket.io';
+import prismadb from './utils/prismadb';
 
 dotenv.config()
 
 const app:Application = express();
 const PORT = process.env.PORT || 8000;
+const server = http.createServer(app);
+export const io = new Server(server, {
+  cors: {
+    origin : '*'
+  }
+});
 
  /*
     MIDDLEWARES FOR ROUTES
@@ -28,6 +39,7 @@ const corsOptions = {
   allowedHeaders : ['Content-Type','Authorization'],
   credentials : true
 }
+
 app.use(cors(corsOptions))
 app.options('*',cors(corsOptions))
 
@@ -36,15 +48,17 @@ app.options('*',cors(corsOptions))
  */
 
 app.use('/auth',authRouter)
-app.use('/admin/auth',adminAuthRouter)
-app.use('/learner',learnerRouter)
+app.use('/admin/auth', adminAuthRouter)
+app.use('/learner/:learnerId/subTopic/:subTopicId/question', questionRouter)
+app.use('/learner/test-progress',testProgressRoute )
+app.use('/learner', learnerRouter)
 app.use('/learner/:learnerId/major',majorRouter)
 app.use('/learner/:learnerId/major/:majorId/specialization',specializationRouter)
 app.use('/learner/:learnerId/specialization/:specializationId/category',categoryRouter)
 app.use('/learner/:learnerId/category/:categoryId/topic', topicRouter)
 app.use('/learner/:learnerId/topic/:topicId/subTopic',subTopicRouter)
-app.use('/learner/:learnerId/subTopic/:subTopicId/question',questionRouter)
-app.use('/learner/:learnerId/subTopic',allotTest)
+app.use('/learner/:learnerId/subTopic', allotTest)
+app.use('/learner/:learnerId/testData', testDatarouter)
 
 
 /* 
@@ -56,7 +70,57 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 
+/*
+
+REAL TIME TEST USING WEBSOCKET
+
+*/
+
+io.on("connection", async (socket) => {
+  try {
+    const params = socket.handshake.query as { userId: string; subTopicId: string };
+    
+    const testProgress = await prismadb.testProgress.findFirst({
+      where: {
+        subTopicId: params.subTopicId,
+        userId: params.userId,
+      },
+    });
+
+    const testData = await prismadb.testData.findFirst({
+      where: {
+        testProgressId: testProgress?.id,
+      },
+    });
+
+    socket.emit("testProgressData", testData);
+  } catch (error) {
+    console.error("Error fetching data from the database:", error);
+    socket.emit("error", { message: "Failed to fetch test progress data." });
+  }
+
+  socket.on("onSelect", async (data) => {
+    try {
+      await prismadb.testData.update({
+        where: {
+          id : data.id as string
+        },
+        data: {
+          data: {
+            push : {questionId:data.questionId,option:data.option,isCorrect:data.correct}
+          }
+        }
+      })
+      // Handle selection data here, potentially updating the database
+      socket.emit("testProgressData",data)
+    } catch (error) {
+      console.error("Error processing onSelect:", error);
+    }
+  });
+  
+})
+
 // STARTING POINT IN SERVER
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

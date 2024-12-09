@@ -27,9 +27,9 @@ export const auth = async (request:Request,res:Response,next:NextFunction)=>{
         const isJWtGenerated = jwt.decode(token,{complete:true}) !== null
 
         let decoded;
-
-        if(isJWtGenerated){
-            decoded = jwt.verify(token,process.env.JWT_SECRET as string) as DecodedToken
+        
+        if (isJWtGenerated) {
+            decoded = jwt.verify(token,"SECRET_KEY") as DecodedToken
             req.userId = decoded.id
         }
 

@@ -29,6 +29,7 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
             }
         })
 
+        console.log(process.env.JWT_SECRET_KEY)
         let token = jwt.sign({email,id:newUser.id},process.env.JWT_SECRET_KEY as string,{})
 
         return res.status(200).json({
@@ -64,6 +65,7 @@ export const signIn = async (req:Request,res:Response):Promise<any>=>{
             throw new Error("Invalid Credentials")
         }
 
+        // console.log(process.env.JWT_SECRET_KEY)
         const token = jwt.sign({email,id:existingUser.id},process.env.JWT_SECRET_KEY as string,{})
 
         return res.status(200).json({

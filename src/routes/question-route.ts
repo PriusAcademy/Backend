@@ -7,7 +7,7 @@ import { adminAuth } from '../middlewares/admin-auth';
 
 const router = express.Router({mergeParams:true})
 
-router.post('/',adminAuth,createQuestion)
+router.post('/', createQuestion)
 router.get('/',getQuestions)
 // router.put('/:topicId',updateTopic)
 // router.delete('/:topicId',deleteTopic)

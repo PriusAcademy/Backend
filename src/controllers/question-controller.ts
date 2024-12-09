@@ -24,6 +24,7 @@ export const getQuestions = async (req:Request,res:Response):Promise<any>=>{
 
 export const createQuestion = async (req:Request,res:Response):Promise<any>=>{
     try {
+        
         const {learnerId,subTopicId} = req.params
         const learnerIds = await prismadb.learner.findMany()
         if (!learnerIds.map(item=>item.id).includes(learnerId)){

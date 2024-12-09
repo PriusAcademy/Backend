@@ -10,7 +10,10 @@ export const adminSignIn = async (req:Request,res:Response):Promise<any>=>{
 
         const ADMIN_PASSWORD = process.env.admin_password
         const ADMIN_EMAIL = process.env.admin_email
-
+        console.log(ADMIN_PASSWORD,"ENV_PASSWORD")
+        console.log(ADMIN_EMAIL,"ENV_EMAIL")
+        console.log(email,"EMAIL")
+        console.log(password,"PASSWORD")
 
         if(ADMIN_PASSWORD != password || ADMIN_EMAIL != email){
             throw new Error("Invalid Credentials")
