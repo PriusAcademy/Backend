@@ -30,17 +30,18 @@ export const createQuestion = async (req:Request,res:Response):Promise<any>=>{
         if (!learnerIds.map(item=>item.id).includes(learnerId)){
             return res.status(400).json("Invalid")
         }
-        const {ans : ansIndex, ansExplanation:answer,code,text:question,options} = await req.body
-
-        const data = await prismadb.question.create({
-            data : {
-                subTopicId,
-                ansIndex,
-                answer,
-                code,
-                question,
-                options,
-            }
+        const { questions } = await req.body as { questions: { ans: string, ansExplanation: string, code: boolean, text: string,options:string[] }[] }
+        
+        const questionArray = questions.map(question => ({
+            ansIndex: question.ans,
+            answer: question.ansExplanation,
+            code: question.code,
+            question:question.text,
+            options: question.options,
+            subTopicId
+        }))
+        const data = await prismadb.question.createMany({
+            data : questionArray
         })
         return res.status(200).json(data)
 
