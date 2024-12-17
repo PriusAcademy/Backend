@@ -14,6 +14,7 @@ import allotTest from './routes/allot-test-route'
 import adminAuthRouter from './routes/admin-auth-route'
 import testProgressRoute from './routes/test-progress-route'
 import testDatarouter from './routes/test-data-route'
+import mailRouter from './routes/email-route'
 import { Server } from 'socket.io';
 import prismadb from './utils/prismadb';
 
@@ -47,7 +48,8 @@ app.options('*',cors(corsOptions))
     ROUTES FOR ADMIN APP
  */
 
-app.use('/auth',authRouter)
+app.use('/auth', authRouter)
+app.use('/send-mail',mailRouter)
 app.use('/admin/auth', adminAuthRouter)
 app.use('/learner/:learnerId/subTopic/:subTopicId/question', questionRouter)
 app.use('/learner/test-progress',testProgressRoute )
