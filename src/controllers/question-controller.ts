@@ -22,6 +22,25 @@ export const getQuestions = async (req:Request,res:Response):Promise<any>=>{
     }
 }
 
+export const getQuestionCount = async (req:Request,res:Response):Promise<any>=>{
+    try {
+        const {learnerId,subTopicId} = req.params
+        const learnerIds = await prismadb.learner.findMany()
+        if (!learnerIds.map(item=>item.id).includes(learnerId)){
+            return res.status(400).json("Invalid")
+        }
+        const count = await prismadb.question.count({
+            where : {
+                subTopicId
+            }
+        })
+        return res.status(200).json(count)
+    } catch (error) {
+        console.log("GET QUESTIONS COUNT CONTROLLER ",error)
+        return res.status(500).json({message:"Something Went wrong"})
+    }
+}
+
 export const createQuestion = async (req:Request,res:Response):Promise<any>=>{
     try {
         

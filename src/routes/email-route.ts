@@ -7,7 +7,6 @@ const upload = multer({storage : multer.memoryStorage()})
 
 router.post('/', upload.single('attachment'), async (req, res) => {
     // const { email, subject, message } = await req.body
-    console.log(req.file?.buffer)
     try {
 
         const transporter = nodemailer.createTransport({
@@ -16,7 +15,7 @@ router.post('/', upload.single('attachment'), async (req, res) => {
         secure: false,  // Set to false for STARTTLS
         auth: {
             user: "rajesh99ed@gmail.com",
-            pass: process.env.password,
+            pass: process.env.password
         },
         tls: {
             rejectUnauthorized: false, // Skip SSL certificate verification (use cautiously)
@@ -24,8 +23,8 @@ router.post('/', upload.single('attachment'), async (req, res) => {
         });
 
         const mailOptions = {
-            from: "rajesh99ed@gmail.com",
-            to: "rajesh1884537@gmail.com",
+            from: "rajesh1884537@gmail.com",
+            to: "rajesh99ed@gmail.com",
             subject: "rajesh99ed@gmail.com",
             attachments: [
                 {
