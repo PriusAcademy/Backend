@@ -1,5 +1,5 @@
 import express from 'express'
-import { createQuestion,getQuestionCount,getQuestions} from '../controllers/question-controller'
+import { createQuestion,getQuestionCount,getQuestions,deleteQuestion} from '../controllers/question-controller'
 import { adminAuth } from '../middlewares/admin-auth';
 
 
@@ -11,6 +11,6 @@ router.post('/', createQuestion)
 router.get('/',getQuestions)
 router.get('/count',getQuestionCount)
 // router.put('/:topicId',updateTopic)
-// router.delete('/:topicId',deleteTopic)
+router.delete('/:questionId',deleteQuestion)
 
 export default router

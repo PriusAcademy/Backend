@@ -96,7 +96,7 @@ export const updateTopic = async (req:Request,res:Response):Promise<any>=>{
     }
 }
 
-export const deleteTopic = async (req:Request,res:Response):Promise<any>=>{
+export const deleteQuestion = async (req:Request,res:Response):Promise<any>=>{
     try {
         const {learnerId,questionId,subTopicId} = req.params
         const learnerIds = await prismadb.learner.findMany()
