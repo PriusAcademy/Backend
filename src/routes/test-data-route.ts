@@ -8,4 +8,5 @@ const router = express.Router({mergeParams:true})
 // router.post('/',auth,createTestData)
 router.get('/:testProgressId',getTestData)
 
+
 export default router

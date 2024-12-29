@@ -21,6 +21,7 @@ model User {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   institute      String
+  code           String         @unique
   testProgresses TestProgress[] @relation("TestProgressToUser")
 }
 
@@ -98,14 +99,17 @@ model SubTopic {
 }
 
 model TestProgress {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  subTopicId String    @db.ObjectId
-  subTopic   SubTopic  @relation("TestProgressToSubTopic", fields: [subTopicId], references: [id])
-  userId     String    @db.ObjectId
-  user       User      @relation("TestProgressToUser", fields: [userId], references: [id])
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  subTopicId        String    @db.ObjectId
+  subTopic          SubTopic  @relation("TestProgressToSubTopic", fields: [subTopicId], references: [id])
+  userId            String    @db.ObjectId
+  user              User      @relation("TestProgressToUser", fields: [userId], references: [id])
   // startDate  DateTime?
-  endDate    DateTime?
-  completed  Boolean   @default(false)
+  endDate           DateTime?
+  attemptsRemaining Int       @default(3)
+  completed         Boolean   @default(false)
+  maxMarks          Int
+  totalQuestions    Int
 }
 
 model TestData {

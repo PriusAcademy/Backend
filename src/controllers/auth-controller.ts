@@ -19,13 +19,27 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
             return res.status(401).send({error:"User already existing"})
         }
 
+        const lastUser = await prisma.user.findFirst({
+            orderBy: {
+            code: 'desc', 
+            },
+        });
+
+        let nextCode = '000001';
+
+        if (lastUser && lastUser.code) {
+            const lastCode = parseInt(lastUser.code, 10); // Convert to integer
+            nextCode = String(lastCode + 1).padStart(6, '0'); // Increment and pad with zeros
+        }
+
         const hashedPassword = await bcrypt.hash(password,12)
 
         const newUser = await prisma.user.create({
             data : {
                 email,
                 hashedPassword,
-                institute
+                institute,
+                code : nextCode
             }
         })
 
@@ -36,7 +50,8 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
             token,
             id:newUser.id,
             email:newUser.email,
-            institute:newUser.institute
+            institute: newUser.institute,
+            code : nextCode
         })
 
     } catch (error) {

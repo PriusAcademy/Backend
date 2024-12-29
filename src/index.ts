@@ -78,49 +78,49 @@ REAL TIME TEST USING WEBSOCKET
 
 */
 
-io.on("connection", async (socket) => {
-  try {
-    const params = socket.handshake.query as { userId: string; subTopicId: string };
+// io.on("connection", async (socket) => {
+//   try {
+//     const params = socket.handshake.query as { userId: string; subTopicId: string };
     
-    const testProgress = await prismadb.testProgress.findFirst({
-      where: {
-        subTopicId: params.subTopicId,
-        userId: params.userId,
-      },
-    });
+//     const testProgress = await prismadb.testProgress.findFirst({
+//       where: {
+//         subTopicId: params.subTopicId,
+//         userId: params.userId,
+//       },
+//     });
 
-    const testData = await prismadb.testData.findFirst({
-      where: {
-        testProgressId: testProgress?.id,
-      },
-    });
+//     const testData = await prismadb.testData.findFirst({
+//       where: {
+//         testProgressId: testProgress?.id,
+//       },
+//     });
 
-    socket.emit("testProgressData", testData);
-  } catch (error) {
-    console.error("Error fetching data from the database:", error);
-    socket.emit("error", { message: "Failed to fetch test progress data." });
-  }
+//     socket.emit("testProgressData", testData);
+//   } catch (error) {
+//     console.error("Error fetching data from the database:", error);
+//     socket.emit("error", { message: "Failed to fetch test progress data." });
+//   }
 
-  socket.on("onSelect", async (data) => {
-    try {
-      await prismadb.testData.update({
-        where: {
-          id : data.id as string
-        },
-        data: {
-          data: {
-            push : {questionId:data.questionId,option:data.option,isCorrect:data.correct}
-          }
-        }
-      })
-      // Handle selection data here, potentially updating the database
-      socket.emit("testProgressData",data)
-    } catch (error) {
-      console.error("Error processing onSelect:", error);
-    }
-  });
+//   socket.on("onSelect", async (data) => {
+//     try {
+//       await prismadb.testData.update({
+//         where: {
+//           id : data.id as string
+//         },
+//         data: {
+//           data: {
+//             push : {questionId:data.questionId,option:data.option,isCorrect:data.correct}
+//           }
+//         }
+//       })
+//       // Handle selection data here, potentially updating the database
+//       socket.emit("testProgressData",data)
+//     } catch (error) {
+//       console.error("Error processing onSelect:", error);
+//     }
+//   });
   
-})
+// })
 
 // STARTING POINT IN SERVER
 server.listen(PORT, () => {
