@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 export const signUp = async (req:Request,res:Response):Promise<any>=>{
     try {
-        const {email,password,institute} = await req.body
+        const {email,password,institute,name} = await req.body
 
         const user = await prisma.user.findUnique({
             where : {
@@ -39,11 +39,12 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
                 email,
                 hashedPassword,
                 institute,
-                code : nextCode
+                code: nextCode,
+                name
             }
         })
 
-        console.log(process.env.JWT_SECRET_KEY)
+        // console.log(process.env.JWT_SECRET_KEY)
         let token = jwt.sign({email,id:newUser.id},process.env.JWT_SECRET_KEY as string,{})
 
         return res.status(200).json({
@@ -51,7 +52,8 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
             id:newUser.id,
             email:newUser.email,
             institute: newUser.institute,
-            code : nextCode
+            code: nextCode,
+            name
         })
 
     } catch (error) {
@@ -87,7 +89,9 @@ export const signIn = async (req:Request,res:Response):Promise<any>=>{
             token,
             id:existingUser.id,
             email:existingUser.email,
-            institute:existingUser.institute
+            institute: existingUser.institute,
+            name: existingUser.name,
+            code:existingUser.code
         })
     } catch (error) {
         console.log("SIGNIN CONTROLLER",error)

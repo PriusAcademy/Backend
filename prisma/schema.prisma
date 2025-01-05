@@ -95,7 +95,8 @@ model SubTopic {
   topic          Topic          @relation("TopicToSubTopic", fields: [topicId], references: [id])
   testProgresses TestProgress[] @relation("TestProgressToSubTopic")
 
-  questions Question[] @relation("SubTopicToQuestion")
+  questions   Question[]   @relation("SubTopicToQuestion")
+  assignments Assignment[] @relation("SubTopicToAssignment")
 }
 
 model TestProgress {
@@ -131,4 +132,14 @@ model Question {
   subTopic   SubTopic @relation("SubTopicToQuestion", fields: [subTopicId], references: [id])
 
   @@index([subTopicId])
+}
+
+model Assignment {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  start      Int
+  end        Int
+  subTopicId String   @db.ObjectId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  subTopic   SubTopic @relation("SubTopicToAssignment", fields: [subTopicId], references: [id])
 }

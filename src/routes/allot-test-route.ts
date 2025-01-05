@@ -1,5 +1,5 @@
 import express from 'express'
-import { allotTest } from '../controllers/allot-test'
+import { allotTest ,getSubTopicsForAllotments} from '../controllers/allot-test'
 import { adminAuth } from '../middlewares/admin-auth';
 
 
@@ -7,7 +7,8 @@ import { adminAuth } from '../middlewares/admin-auth';
 
 const router = express.Router({mergeParams:true})
 
-router.patch('/:subTopicId',adminAuth,allotTest)
+router.get('/:user_code',getSubTopicsForAllotments)
+router.patch('/:subTopicId',allotTest)
 
 
 export default router
