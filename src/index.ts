@@ -59,7 +59,7 @@ app.use('/learner/:learnerId/major/:majorId/specialization',specializationRouter
 app.use('/learner/:learnerId/specialization/:specializationId/category',categoryRouter)
 app.use('/learner/:learnerId/category/:categoryId/topic', topicRouter)
 app.use('/learner/:learnerId/topic/:topicId/subTopic',subTopicRouter)
-app.use('/learner/:learnerId/subTopic', allotTest)
+app.use('/learner/:learnerId/topic', allotTest)
 app.use('/learner/:learnerId/testData', testDatarouter)
 
 

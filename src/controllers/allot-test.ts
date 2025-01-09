@@ -4,24 +4,27 @@ import prismadb from "../utils/prismadb";
 
 export const allotTest = async (req:Request,res:Response):Promise<any>=>{
     try {
-        const {learnerId,subTopicId} = req.params
+        const {learnerId,topicId} = req.params
         const learnerIds = await prismadb.learner.findMany()
         if (!learnerIds.map(item=>item.id).includes(learnerId)){
             return res.status(400).json("Invalid")
         }
-        const {start,end} = await req.body
+        const {startTime,endTime,start,end,description} = await req.body
 
-        const existingSubTopic = await prismadb.subTopic.findUnique({
-            where: {
-                id : subTopicId
-            }
-        })
+        // const existingSubTopic = await prismadb.subTopic.findUnique({
+        //     where: {
+        //         id : subTopicId
+        //     }
+        // })
 
         const assignment = await prismadb.assignment.create({
-            data : {
-                subTopicId,
+            data: {
+                startTime: new Date(startTime),
+                endTime : new Date(endTime),
+                topicId,
                 start: parseInt(start),
-                end : parseInt(end)
+                end: parseInt(end),
+                description
             },
         })
         // console.log(body)
@@ -32,7 +35,7 @@ export const allotTest = async (req:Request,res:Response):Promise<any>=>{
     }
 }
 
-export const getSubTopicsForAllotments = async (req:Request,res:Response):Promise<any>=>{
+export const getTopicsForAssignment = async (req:Request,res:Response):Promise<any>=>{
     try {
 
         const {learnerId, user_code } = req.params
@@ -49,16 +52,25 @@ export const getSubTopicsForAllotments = async (req:Request,res:Response):Promis
                 ]
             },
             include: {
-                subTopic : true
+                topic: {
+                    include: {
+                        subTopics : true
+                    }
+                }
+            },
+            orderBy: {
+                endTime : 'asc'
             }
         })
 
-        const subTopics = assignments.map(assignment=>assignment.subTopic)
+        // const subTopics = assignments.map(assignment=>assignment.subTopic)
 
         // console.log(body)
-        return res.status(200).json(subTopics)
+        return res.status(200).json(assignments)
     } catch (error) {
         console.log("GET TEST CONTROLLER ",error)
         return res.status(500).json({message:"Something Went wrong"})
     }
 }
+
+

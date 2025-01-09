@@ -72,13 +72,14 @@ model Category {
 }
 
 model Topic {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  categoryId String     @db.ObjectId
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  category   Category   @relation("CategoryToTopic", fields: [categoryId], references: [id])
-  subTopics  SubTopic[] @relation("TopicToSubTopic")
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  categoryId  String       @db.ObjectId
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  category    Category     @relation("CategoryToTopic", fields: [categoryId], references: [id])
+  subTopics   SubTopic[]   @relation("TopicToSubTopic")
+  assignmenst Assignment[] @relation("TopicToAssignment")
 
   @@index([categoryId])
 }
@@ -95,8 +96,8 @@ model SubTopic {
   topic          Topic          @relation("TopicToSubTopic", fields: [topicId], references: [id])
   testProgresses TestProgress[] @relation("TestProgressToSubTopic")
 
-  questions   Question[]   @relation("SubTopicToQuestion")
-  assignments Assignment[] @relation("SubTopicToAssignment")
+  questions Question[] @relation("SubTopicToQuestion")
+  // assignments Assignment[] @relation("SubTopicToAssignment")
 }
 
 model TestProgress {
@@ -135,11 +136,14 @@ model Question {
 }
 
 model Assignment {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  start      Int
-  end        Int
-  subTopicId String   @db.ObjectId
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  subTopic   SubTopic @relation("SubTopicToAssignment", fields: [subTopicId], references: [id])
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  start       Int
+  end         Int
+  topicId     String    @db.ObjectId
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  topic       Topic     @relation("TopicToAssignment", fields: [topicId], references: [id])
+  startTime   DateTime?
+  endTime     DateTime?
+  description String
 }

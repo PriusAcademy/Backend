@@ -42,7 +42,29 @@ export const getTestProgress = async (req:Request,res:Response):Promise<any>=>{
                 id : testProgressId
             }
         })
+        
+        return res.status(200).json(progress)
+    } catch (error) {
+        console.log("GET TEST PROGRESS CONTROLLER ",error)
+        return res.status(500).json({message:"Something Went wrong"})
+    }
+}
 
+export const getTestProgressByUserIdAndSubTopicId = async (req:Request,res:Response):Promise<any>=>{
+    try {
+        const {subTopicId,userId} = req.params
+        
+        if (!isValidId(subTopicId)) {
+            return null;
+        }
+
+        const progress = await prismadb.testProgress.findFirst({
+            where : {
+                subTopicId,
+                userId
+            }
+        })
+        
         return res.status(200).json(progress)
     } catch (error) {
         console.log("GET TEST PROGRESS CONTROLLER ",error)
