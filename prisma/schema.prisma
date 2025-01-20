@@ -13,6 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Year {
+  FIRST_YEAR
+  SECOND_YEAR
+  THIRD_YEAR
+  FOURTH_YEAR
+}
+
 model User {
   id             String         @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
@@ -20,9 +27,12 @@ model User {
   hashedPassword String?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-  institute      String
+  collegeId      String         @db.ObjectId
+  college        College        @relation("UserToCollege", fields: [collegeId], references: [id])
   code           String         @unique
+  year           Year
   testProgresses TestProgress[] @relation("TestProgressToUser")
+  assignments    Assignment[]   @relation("AssignmentToUser")
 }
 
 model Learner {
@@ -100,6 +110,12 @@ model SubTopic {
   // assignments Assignment[] @relation("SubTopicToAssignment")
 }
 
+model College {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  users User[] @relation("UserToCollege")
+}
+
 model TestProgress {
   id                String    @id @default(auto()) @map("_id") @db.ObjectId
   subTopicId        String    @db.ObjectId
@@ -112,6 +128,9 @@ model TestProgress {
   completed         Boolean   @default(false)
   maxMarks          Int
   totalQuestions    Int
+
+  @@index([userId])
+  @@index([subTopicId])
 }
 
 model TestData {
@@ -137,8 +156,6 @@ model Question {
 
 model Assignment {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  start       Int
-  end         Int
   topicId     String    @db.ObjectId
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -146,4 +163,10 @@ model Assignment {
   startTime   DateTime?
   endTime     DateTime?
   description String
+  completed   Boolean   @default(false)
+  userId      String    @db.ObjectId
+  user        User      @relation("AssignmentToUser", fields: [userId], references: [id])
+
+  @@index([topicId])
+  @@index([userId])
 }

@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 export const signUp = async (req:Request,res:Response):Promise<any>=>{
     try {
-        const {email,password,institute,name} = await req.body
+        const {email,password,collegeId,year,name} = await req.body
 
         const user = await prisma.user.findUnique({
             where : {
@@ -38,9 +38,13 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
             data : {
                 email,
                 hashedPassword,
-                institute,
+                year ,
+                collegeId,
                 code: nextCode,
                 name
+            },
+            include: {
+                college : true
             }
         })
 
@@ -51,7 +55,7 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
             token,
             id:newUser.id,
             email:newUser.email,
-            institute: newUser.institute,
+            institute: newUser.college.name,
             code: nextCode,
             name
         })
@@ -69,6 +73,8 @@ export const signIn = async (req:Request,res:Response):Promise<any>=>{
         let existingUser = await prisma.user.findUnique({
             where : {
                 email
+            }, include: {
+                college : true
             }
         })
 
@@ -89,7 +95,7 @@ export const signIn = async (req:Request,res:Response):Promise<any>=>{
             token,
             id:existingUser.id,
             email:existingUser.email,
-            institute: existingUser.institute,
+            institute: existingUser.college.name,
             name: existingUser.name,
             code:existingUser.code
         })

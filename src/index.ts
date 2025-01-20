@@ -10,11 +10,13 @@ import categoryRouter from './routes/category-route'
 import topicRouter from './routes/topic-route'
 import subTopicRouter from './routes/sub-topic-route'
 import questionRouter from './routes/question-route'
-import allotTest from './routes/allot-test-route'
+import assignmentAndTestRoute from './routes/allot-test-route'
 import adminAuthRouter from './routes/admin-auth-route'
 import testProgressRoute from './routes/test-progress-route'
 import testDatarouter from './routes/test-data-route'
+import reportRouter from './routes/report-route'
 import mailRouter from './routes/email-route'
+import collegeRouter from './routes/college-route'
 import { Server } from 'socket.io';
 import prismadb from './utils/prismadb';
 
@@ -55,11 +57,13 @@ app.use('/learner/:learnerId/subTopic/:subTopicId/question', questionRouter)
 app.use('/learner/test-progress',testProgressRoute )
 app.use('/learner', learnerRouter)
 app.use('/learner/:learnerId/major',majorRouter)
+app.use('/learner/:learnerId/report',reportRouter)
+app.use('/learner/:learnerId/college',collegeRouter)
 app.use('/learner/:learnerId/major/:majorId/specialization',specializationRouter)
 app.use('/learner/:learnerId/specialization/:specializationId/category',categoryRouter)
 app.use('/learner/:learnerId/category/:categoryId/topic', topicRouter)
 app.use('/learner/:learnerId/topic/:topicId/subTopic',subTopicRouter)
-app.use('/learner/:learnerId/topic', allotTest)
+app.use('/learner/:learnerId/topic', assignmentAndTestRoute)
 app.use('/learner/:learnerId/testData', testDatarouter)
 
 
