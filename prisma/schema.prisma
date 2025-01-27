@@ -13,13 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Year {
-  FIRST_YEAR
-  SECOND_YEAR
-  THIRD_YEAR
-  FOURTH_YEAR
-}
-
 model User {
   id             String         @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
@@ -29,10 +22,10 @@ model User {
   updatedAt      DateTime       @updatedAt
   collegeId      String         @db.ObjectId
   college        College        @relation("UserToCollege", fields: [collegeId], references: [id])
-  code           String         @unique
-  year           Year
+  code           Int            @unique
   testProgresses TestProgress[] @relation("TestProgressToUser")
   assignments    Assignment[]   @relation("AssignmentToUser")
+  registerNumber String?        @unique
 }
 
 model Learner {
@@ -124,7 +117,7 @@ model TestProgress {
   user              User      @relation("TestProgressToUser", fields: [userId], references: [id])
   // startDate  DateTime?
   endDate           DateTime?
-  attemptsRemaining Int       @default(3)
+  attemptsRemaining Int       @default(0)
   completed         Boolean   @default(false)
   maxMarks          Int
   totalQuestions    Int

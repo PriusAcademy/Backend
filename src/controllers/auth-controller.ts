@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 export const signUp = async (req:Request,res:Response):Promise<any>=>{
     try {
-        const {email,password,collegeId,year,name} = await req.body
+        const {email,password,collegeId,registerNumber,name} = await req.body
 
         const user = await prisma.user.findUnique({
             where : {
@@ -21,15 +21,15 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
 
         const lastUser = await prisma.user.findFirst({
             orderBy: {
-            code: 'desc', 
+            createdAt : 'desc'
             },
         });
 
-        let nextCode = '000001';
+        let nextCode = 1;
 
         if (lastUser && lastUser.code) {
-            const lastCode = parseInt(lastUser.code, 10); // Convert to integer
-            nextCode = String(lastCode + 1).padStart(6, '0'); // Increment and pad with zeros
+            const lastCode = lastUser.code // Convert to integer
+            nextCode = lastCode+1 // Increment and pad with zeros
         }
 
         const hashedPassword = await bcrypt.hash(password,12)
@@ -38,7 +38,7 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
             data : {
                 email,
                 hashedPassword,
-                year ,
+                registerNumber,
                 collegeId,
                 code: nextCode,
                 name
@@ -68,15 +68,30 @@ export const signUp = async (req:Request,res:Response):Promise<any>=>{
 
 export const signIn = async (req:Request,res:Response):Promise<any>=>{
     try {
-        const {email,password} = await req.body
+        const { email, password, registerNumber } = await req.body
+        
+        let existingUser;
 
-        let existingUser = await prisma.user.findUnique({
-            where : {
-                email
-            }, include: {
-                college : true
-            }
-        })
+        if (email) {
+                existingUser = await prisma.user.findUnique({
+                where : {
+                    email
+                }, include: {
+                    college : true
+                }
+            })
+        }
+
+        if (registerNumber) {
+                existingUser = await prisma.user.findUnique({
+                where : {
+                    registerNumber
+                }, include: {
+                    college : true
+                }
+            })
+        }
+        
 
         if(!existingUser){
             throw new Error("User doesn't existing")

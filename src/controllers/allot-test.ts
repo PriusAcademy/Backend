@@ -11,7 +11,7 @@ export const allotTest = async (req:Request,res:Response):Promise<any>=>{
             return res.status(400).json("Invalid")
         }
 
-        const { startTime, endTime, collegeId, year, description } = await req.body
+        const { startTime, endTime, collegeId, startingNumber,endingNumber, description } = await req.body
 
         // const existingSubTopic = await prismadb.subTopic.findUnique({
         //     where: {
@@ -19,10 +19,16 @@ export const allotTest = async (req:Request,res:Response):Promise<any>=>{
         //     }
         // })
 
+        const startingCode = parseInt(startingNumber)
+        const endingCode = parseInt(endingNumber)
+
         const users = await prismadb.user.findMany({
             where: {
                 collegeId,
-                year
+                AND: [
+                    { code: { gte: startingCode } },
+                    {code : {lte : endingCode}}
+                ]
             }
         })
 
