@@ -51,7 +51,7 @@ export const getReportsByUser = async (req: Request, res: Response): Promise<any
                     let testProgress = 
                     {
                         name: suptopic.name,
-                        doa: assignment.createdAt,
+                    doa: assignment.createdAt,
                         status: test?.completed || false,
                         attempts : test?.attemptsRemaining || 0,
                         doc : assignment.createdAt
