@@ -113,7 +113,7 @@ export const updateTestProgress = async (req:Request,res:Response):Promise<any>=
         const request = req as CustomRequest;
         const { totalMarks, totalQuestions, email, subTopicId, testProgressId } = await request.body
         // console.log(totalMarks,totalQuestions,testProgressId)
-        const isPassed = (totalMarks / totalQuestions) >= 0
+        const isPassed = (totalMarks / totalQuestions) >= 0.3
         // console.log(totalMarks,totalQuestions)
         const existingProgress = await prismadb.testProgress.findUnique({
             where: {
@@ -127,11 +127,11 @@ export const updateTestProgress = async (req:Request,res:Response):Promise<any>=
                 }, data: {
                 completed: existingProgress?.completed || isPassed,
                 totalQuestions,
-                maxMarks: Math.max(totalMarks,existingProgress?.maxMarks || 0)
-                
+                maxMarks: Math.max(totalMarks,existingProgress?.maxMarks || 0),
+                attemptsRemaining : (existingProgress?.attemptsRemaining || 0)+1
                 }
             })
-        console.log(updatedTestProgress)
+        // console.log(updatedTestProgress)
         if (updatedTestProgress.completed) {
 
             const subtopic = await prismadb.subTopic.findUnique({
