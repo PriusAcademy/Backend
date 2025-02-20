@@ -6,7 +6,7 @@ import { adminAuth } from '../middlewares/admin-auth';
 
 const router = express.Router({mergeParams:true})
 
-router.post('/',adminAuth,createSpecialization)
+router.post('/',createSpecialization)
 router.get('/',getSpecializations)
 router.put('/:specializationId',adminAuth,updateSpecialization)
 router.delete('/:specializationId',adminAuth,deleteSpecialization)

@@ -23,18 +23,18 @@ export const getTopics = async (req:Request,res:Response):Promise<any>=>{
 
 export const createTopic = async (req:Request,res:Response):Promise<any>=>{
     try {
-        console.log("CREATE TOPIC CONTROLLER")
         const {learnerId,categoryId} = req.params
         const learnerIds = await prismadb.learner.findMany()
         if (!learnerIds.map(item=>item.id).includes(learnerId)){
             return res.status(400).json("Invalid")
         }
-        const {name} = await req.body
+        const {name,src} = await req.body
 
         const topic = await prismadb.topic.create({
             data : {
                name,
-               categoryId 
+                categoryId,
+               imgSrc : src || ''
             }
         })
 

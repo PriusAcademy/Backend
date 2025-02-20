@@ -7,7 +7,7 @@ import { adminAuth } from '../middlewares/admin-auth';
 
 const router = express.Router({mergeParams:true})
 
-router.post('/',adminAuth,createCategory)
+router.post('/',createCategory)
 router.get('/',getCategories)
 router.put('/:categoryId',adminAuth,updateCategory)
 router.delete('/:categoryId',adminAuth,deleteCategory)

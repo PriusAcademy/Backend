@@ -83,6 +83,7 @@ model Topic {
   category    Category     @relation("CategoryToTopic", fields: [categoryId], references: [id])
   subTopics   SubTopic[]   @relation("TopicToSubTopic")
   assignmenst Assignment[] @relation("TopicToAssignment")
+  imgSrc      String?
 
   @@index([categoryId])
 }

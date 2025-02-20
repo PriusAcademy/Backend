@@ -113,7 +113,7 @@ export const updateTestProgress = async (req:Request,res:Response):Promise<any>=
         const request = req as CustomRequest;
         const { totalMarks, totalQuestions, email, subTopicId, testProgressId } = await request.body
         // console.log(totalMarks,totalQuestions,testProgressId)
-        const isPassed = (totalMarks / totalQuestions) >= 0.3
+        const isPassed = (totalMarks / totalQuestions) >= 0.1
         // console.log(totalMarks,totalQuestions)
         const existingProgress = await prismadb.testProgress.findUnique({
             where: {

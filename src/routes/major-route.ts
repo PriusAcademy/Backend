@@ -6,9 +6,9 @@ import { adminAuth } from '../middlewares/admin-auth';
 
 const router = express.Router({mergeParams:true})
 
-router.post('/',adminAuth,createMajor)
+router.post('/',createMajor)
 router.get('/',getMajors)
-router.put('/:majorId',adminAuth,updateMajor)
-router.delete('/:majorId',adminAuth,deleteMajor)
+router.put('/:majorId',updateMajor)
+router.delete('/:majorId',deleteMajor)
 
 export default router

@@ -26,7 +26,7 @@ export const createMajor = async (req:Request,res:Response):Promise<any>=>{
             data : {
                name,
                 learnerId,
-               src
+               src : src || ""
             }
         })
 
